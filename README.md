@@ -2,7 +2,7 @@
 
 This repository contains a proxy server built with basic Python libraries (such as socket) that handles HTTP requests and responses between clients and servers. The proxy server can be accessed locally using `localhost:8888`. A caching system is implemented to reduce redundant data transfers and improve performance.
 
-This repository contains the main Python script `ProxyServer.py`, which facilitates HTTP communication and caching.
+This repository contains the main Python script `ProxyServer.py`, which facilitates HTTP communication and caching. This project was created for my Computer Networks course in Spring 2024.
 
 ### Key Features:
 - HTTP request and response handling.
