@@ -1,52 +1,62 @@
 # HTTP-Proxy-Server
 
-This project simulates the Hypertext Transfer Protocol (HTTP) using Python. HTTP is an application layer protocol that can be easily implemented using socket programming. The focus of this project is on handling HTTP GET requests and responses. Other HTTP methods and features, such as caching, can be added as needed.
+This repository contains a proxy server built with basic Python libraries (such as socket) that handles HTTP requests and responses between clients and servers. The proxy server can be accessed locally using `localhost:8888`. A caching system is implemented to reduce redundant data transfers and improve performance.
 
-This repository contains two main Python scripts: `ServerMain.py` for the server and `ClientMain.py` for the client.
+This repository contains the main Python script `ProxyServer.py`, which facilitates HTTP communication and caching.
 
 ### Key Features:
-- HTTP GET request handling.
-- 200 and 404 status code responses.
-- Compatible with both custom clients and web browsers.
+- HTTP request and response handling.
+- Resource caching for improved performance.
+- Multithreading to handle multiple client connections.
 
 
-## Custom HTTP Server
+## Usage:
+After running the server, the proxy server can be used to access any HTTP website by opening `localhost:8888/web_address` (replace the web address with the desired web page) in a browser.
 
-The server code is located in `ServerMain.py`. The server listens for incoming HTTP GET requests and responds accordingly. It is designed to handle one client request at a time and supports multithreading, allowing it to manage multiple clients.
-
-### How the Server Works:
-- The server binds to an address (localhost by default) and a chosen port.
-- It enters listening mode, awaiting client connections.
-- Upon receiving a client request, it accepts the connection, processes the GET request, and returns an appropriate HTTP response.
-- The server responds with either:
-    - Status code 200 and the requested HTML file if found.
-    - Status code 404 and a "File Not Found" HTML page if the requested file does not exist.
-
-The server is compatible with requests from web browsers as well, allowing users to access `webpage.html` by default.
-
-### Connecting the Server
-
-You can access the server using two different methods:
-- Run the `ClientMain.py` file and enter the file path of the webpage you wish to request.
-- Open a web browser and navigate to `localhost:<port>` to see the default webpage.
+**Example:** You can try opening `localhost:8888/httpforever.com/` .
 
 
-## Custom Client
+## Proxy Server Features
 
-The client code is located in `ClientMain.py`. The client connects to the server and sends HTTP GET requests to retrieve files. The client allows users to choose which webpage to access by specifying the file path.
+A proxy server acts as an intermediary between client devices (such as web browsers) and web servers. It forwards HTTP requests from clients to the server and passes responses back to the clients.
+In this project, the proxy server primarily focuses on HTTP communication, as advanced protocols like HTTPS are not fully supported due to the use of basic Python libraries.
 
-### How the Client Works:
-- The client creates a socket and connects to the server using the specified IP address and port.
-- It sends an HTTP GET request for a specific file.
-- The request follows the HTTP format, including the request type (GET), file path, and version of HTTP being used, as well as headers like the host.
-- The client receives the server's response, which may contain:
-    - A 200 status code and the requested HTML file.
-    - A 404 status code if the file does not exist.
+The proxy server's main feature are:
+1. Receive an HTTP request from the client.
+2. Modify the request and forward it to the target web server.
+3. Relay the server’s response to the client.
+4. Cache frequently requested resources for faster response times.
+
+The server uses multithreading to handle multiple clients simultaneously. Each connection is closed after one request-response cycle, meaning a new connection is needed for each request.
 
 
-### Status Code 404: Not Found
+## Modifying The Original Request
 
-If a client requests a non-existent webpage, the server responds with a 404 status code and a "File Not Found" HTML page. The connection is then terminated .For transparency, this interaction is displayed in the client and server logs. The client must establish a new connection to request a different page.
+When a client connects to the proxy server, it sends an HTTP request (either GET or POST). The proxy server extracts the server address and the file path from the URL, modifies the request headers, and forwards the request to the web server via port 80.
+
+For example:
+- Original request: `localhost:8888/www.example.com/path/to/resource`
+- Modified request headers:
+    ```http
+    GET /path/to/resource HTTP/1.1
+    Host: www.example.com
+    ```
+
+The `Connection` header is set to `close` to ensure that each connection terminates after the full request-response cycle.
+
+
+## Logging and Error Handling
+
+The proxy server logs all significant actions, such as receiving requests, sending responses, and caching files. Logs for both the client and server interactions are displayed in real-time, and error handling is implemented to manage exceptions during communication.
+
+In case of an error, such as when a requested resource cannot be found, the proxy server sends a custom "Not Found" response back to the client.
+
+
+## Web Caching
+
+The proxy server includes a simple caching system. Each time a resource is requested by a client, the server caches the response in the `cache` folder. The file name is derived from the requested URL, making each cached resource easily identifiable.
+
+When a client requests a cached resource, the proxy server retrieves the response from the cache instead of fetching it again from the original server. This reduces traffic and improves response times. Note that the current implementation does not update cached resources.
 
 
 ## License
